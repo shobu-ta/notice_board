@@ -47,6 +47,7 @@ class PostsController extends AppController
         $post = $this->Posts->newEmptyEntity();
         if ($this->request->is('post')) {
             $post = $this->Posts->patchEntity($post, $this->request->getData());
+
             if ($this->Posts->save($post)) {
                 $this->Flash->success(__('The post has been saved.'));
 
@@ -101,5 +102,15 @@ class PostsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    
+    
+    // sectionアクションの追加 
+    public function section($id = null)
+    {
+        $section = $this->Posts->Sections->get($id, [
+            'contain' => ['Posts' => ['Users']]
+        ]);
+        $this->set(compact('section'));
     }
 }
