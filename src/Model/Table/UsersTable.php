@@ -37,16 +37,21 @@ class UsersTable extends Table
      * @param array<string, mixed> $config The configuration for the Table.
      * @return void
      */
+    //initialize() は「構造と関係の宣言」
     public function initialize(array $config): void
+
     {
         parent::initialize($config);
-
+    //DBのどのテーブルか
         $this->setTable('users');
+    //画面表示用の代表カラム
         $this->setDisplayField('username');
+    //主キー
         $this->setPrimaryKey('id');
+    
 
         $this->addBehavior('Timestamp');
-
+    //超重要：User は複数の Post を持つという 関係の宣言 です。
         $this->hasMany('Posts', [
             'foreignKey' => 'user_id',
         ]);
@@ -58,6 +63,8 @@ class UsersTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
+
+    //フォームからの入力を守る門番 add,edit,saveの前に動く
     public function validationDefault(Validator $validator): Validator
     {
         $validator
@@ -88,6 +95,8 @@ class UsersTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
+
+    //buildRules() = DB整合性チェック（最後の砦）  rules は「DB衝突防止」
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['username']), ['errorField' => 'username']);

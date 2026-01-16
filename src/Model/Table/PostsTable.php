@@ -47,11 +47,13 @@ class PostsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-
+        
+        // postsはusersに属している（多対一） INNER の意味:userが存在しないpostは取得できない
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
         ]);
+        // posts は sections に属している（多対多） 1つの投稿は複数の部署に属せる 部署も複数の投稿を持てる  中間テーブル：posts_sections
         $this->belongsToMany('Sections', [
             'foreignKey' => 'post_id',
             'targetForeignKey' => 'section_id',
@@ -67,21 +69,22 @@ class PostsTable extends Table
      */
     public function validationDefault(Validator $validator): Validator
     {
+        // user_id は必須、空は禁止
         $validator
             ->nonNegativeInteger('user_id')
             ->notEmptyString('user_id');
-
+        // title は文字列、最大255文字、作成時に必須、空は禁止
         $validator
             ->scalar('title')
             ->maxLength('title', 255)
             ->requirePresence('title', 'create')
             ->notEmptyString('title');
-
+        // body は文字列、作成時に必須、空は禁止
         $validator
             ->scalar('body')
             ->requirePresence('body', 'create')
             ->notEmptyString('body');
-
+        // published は真偽値、空は禁止
         $validator
             ->boolean('published')
             ->notEmptyString('published');
@@ -96,8 +99,10 @@ class PostsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
+    //buildRules()：データベース整合性チェック
     public function buildRules(RulesChecker $rules): RulesChecker
     {
+        //user_id が Users テーブルに本当に存在するか確認
         $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
 
         return $rules;
