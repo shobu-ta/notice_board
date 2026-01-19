@@ -29,20 +29,26 @@
                     <td><?= h($post->published) ?></td>
                     <td><?= h($post->created) ?></td>
                     <td><?= h($post->modified) ?></td>
-                    <td class="actions">
+                   <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $post->id]) ?>
-                        <?php if ($this->Identity->isLoggedIn() && $post->user_id === $this->Identity->get('id')): ?>
-                            <?= $this->Html->link(
-                                '編集',
-                                ['action' => 'edit', $post->id]
-                            ) ?>
+
+                        <?php if (
+                            $this->Identity->isLoggedIn() &&
+                            (
+                                $this->Identity->get('role') === 'admin' ||
+                                $post->user_id === $this->Identity->get('id')
+                            )
+                        ): ?>
+                            <?= $this->Html->link('編集', ['action' => 'edit', $post->id]) ?>
+
                             <?= $this->Form->postLink(
                                 '削除',
                                 ['action' => 'delete', $post->id],
                                 ['confirm' => '本当に削除しますか？']
                             ) ?>
-                    <?php endif; ?>
+                        <?php endif; ?>
                     </td>
+
                 </tr>
                 <?php endforeach; ?>
             </tbody>

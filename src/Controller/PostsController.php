@@ -82,7 +82,12 @@ class PostsController extends AppController
         // ログインユーザー取得
         $user = $this->request->getAttribute('identity');
         // ★ 他人の投稿なら拒否
-        if ($post->user_id !== $user->id) {
+        // if ($post->user_id !== $user->id) {
+        //     throw new ForbiddenException('この投稿を編集する権限がありません');
+        // }
+
+        //これは次の条件を 両方満たした場合だけ エラーを出します。ログインユーザーが admin ではないその投稿の所有者でもない
+        if ($user->role !== 'admin' && $post->user_id !== $user->id) {
             throw new ForbiddenException('この投稿を編集する権限がありません');
         }
 
@@ -116,9 +121,15 @@ class PostsController extends AppController
         $user = $this->request->getAttribute('identity');
 
         // 他人の投稿なら拒否
-        if (!$user || $post->user_id !== $user->id) {
+        //if (!$user || $post->user_id !== $user->id) {
+        //    throw new ForbiddenException('この投稿を削除する権限がありません');
+        //}
+
+         //これは次の条件を 両方満たした場合だけ エラーを出します。ログインユーザーが admin ではないその投稿の所有者でもない
+        if ($user->role !== 'admin' && $post->user_id !== $user->id) {
             throw new ForbiddenException('この投稿を削除する権限がありません');
         }
+
 
         if ($this->Posts->delete($post)) {
             $this->Flash->success(__('投稿は削除されました。'));
