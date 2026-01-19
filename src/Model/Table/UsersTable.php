@@ -56,6 +56,8 @@ class UsersTable extends Table
             'foreignKey' => 'user_id',
         ]);
     }
+    
+  
 
     /**
      * Default validation rules.
@@ -103,4 +105,5 @@ class UsersTable extends Table
 
         return $rules;
     }
+    
 }

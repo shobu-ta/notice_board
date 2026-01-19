@@ -31,15 +31,17 @@
                     <td><?= h($post->modified) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $post->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $post->id]) ?>
-                        <?= $this->Form->postLink(
-                            __('Delete'),
-                            ['action' => 'delete', $post->id],
-                            [
-                                'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $post->id),
-                            ]
-                        ) ?>
+                        <?php if ($this->Identity->isLoggedIn() && $post->user_id === $this->Identity->get('id')): ?>
+                            <?= $this->Html->link(
+                                '編集',
+                                ['action' => 'edit', $post->id]
+                            ) ?>
+                            <?= $this->Form->postLink(
+                                '削除',
+                                ['action' => 'delete', $post->id],
+                                ['confirm' => '本当に削除しますか？']
+                            ) ?>
+                    <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

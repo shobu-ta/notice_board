@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 namespace App\Controller;
-
+use Cake\Event\EventInterface;
 /**
  * Users Controller
  *
@@ -10,7 +10,58 @@ namespace App\Controller;
  */
 class UsersController extends AppController
 {
-    /**
+   
+
+   
+    
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        // ログイン・ユーザー登録は認証不要にする
+        $this->Authentication->addUnauthenticatedActions([
+            'login',
+            'add',
+            'logout',
+        ]);
+    }
+
+    public function login()
+    {
+        $this->request->allowMethod(['get', 'post']);
+
+        $result = $this->Authentication->getResult();
+
+        // 認証成功
+        if ($result && $result->isValid()) {
+            $redirect = $this->request->getQuery('redirect', [
+                'controller' => 'Posts',
+                'action' => 'index',
+            ]);
+
+            return $this->redirect($redirect);
+        }
+
+        // 認証失敗（POST時）
+        if ($this->request->is('post') && (!$result || !$result->isValid())) {
+            $this->Flash->error(__('ユーザー名またはパスワードが正しくありません'));
+        }
+    }
+
+    public function logout()
+    {
+        $this->request->allowMethod(['post', 'get']);
+        $result = $this->Authentication->getResult();
+
+        if ($result && $result->isValid()) {
+            $this->Authentication->logout();
+            $this->Flash->success('ログアウトしました');
+        }
+
+        return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+    }
+ 
+     /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view

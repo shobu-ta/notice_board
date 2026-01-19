@@ -17,9 +17,11 @@
         <div class="posts form content">
             <?= $this->Form->create($post) ?>
             <fieldset>
-                <legend><?= __('Add Post') ?></legend>
                 <?php
-                    echo $this->Form->control('user_id', ['options' => $users]);
+                    $identity = $this->request->getAttribute('identity');
+                    if ($identity) {
+                    echo '<p><strong>' . h($identity->username) . ' の新規投稿</strong></p>';
+                 }
                     echo $this->Form->control('title');
                     echo $this->Form->control('body');
                     echo $this->Form->control('published');

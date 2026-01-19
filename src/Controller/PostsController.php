@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Http\Exception\ForbiddenException;
+
 /**
  * Posts Controller
  *
@@ -46,14 +48,20 @@ class PostsController extends AppController
     {
         $post = $this->Posts->newEmptyEntity();
         if ($this->request->is('post')) {
+            
             $post = $this->Posts->patchEntity($post, $this->request->getData());
+           
+            //ログイン中ユーザーidを取得してuser_idを自動でセットする
+            $user=$this->request->getAttribute('identity');
+            $post->user_id=$user->id;
+
 
             if ($this->Posts->save($post)) {
-                $this->Flash->success(__('The post has been saved.'));
+                $this->Flash->success(__('投稿しました'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The post could not be saved. Please, try again.'));
+            $this->Flash->error(__('投稿に失敗しました'));
         }
         $users = $this->Posts->Users->find('list', limit: 200)->all();
         $sections = $this->Posts->Sections->find('list', limit: 200)->all();
@@ -70,14 +78,22 @@ class PostsController extends AppController
     public function edit($id = null)
     {
         $post = $this->Posts->get($id, contain: ['Sections']);
+
+        // ログインユーザー取得
+        $user = $this->request->getAttribute('identity');
+        // ★ 他人の投稿なら拒否
+        if ($post->user_id !== $user->id) {
+            throw new ForbiddenException('この投稿を編集する権限がありません');
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $post = $this->Posts->patchEntity($post, $this->request->getData());
             if ($this->Posts->save($post)) {
-                $this->Flash->success(__('The post has been saved.'));
+                $this->Flash->success(__('投稿が更新されました。'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The post could not be saved. Please, try again.'));
+            $this->Flash->error(__('投稿が更新されませんでした。再度お試しください。'));
         }
         $users = $this->Posts->Users->find('list', limit: 200)->all();
         $sections = $this->Posts->Sections->find('list', limit: 200)->all();
@@ -95,10 +111,19 @@ class PostsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $post = $this->Posts->get($id);
+
+        // ログインユーザー取得
+        $user = $this->request->getAttribute('identity');
+
+        // 他人の投稿なら拒否
+        if (!$user || $post->user_id !== $user->id) {
+            throw new ForbiddenException('この投稿を削除する権限がありません');
+        }
+
         if ($this->Posts->delete($post)) {
-            $this->Flash->success(__('The post has been deleted.'));
+            $this->Flash->success(__('投稿は削除されました。'));
         } else {
-            $this->Flash->error(__('The post could not be deleted. Please, try again.'));
+            $this->Flash->error(__('投稿の削除に失敗しました。再度お試しください。'));
         }
 
         return $this->redirect(['action' => 'index']);
