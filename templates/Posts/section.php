@@ -3,8 +3,23 @@
 <ul>
 <?php foreach ($section->posts as $post) : ?>
     <li>
-        <?= h($post->title) ?>
-        (<?= h($post->user->name ?? '') ?>)
+        <?= $this->Html->link(
+        h($post->title),
+        ['controller' => 'Posts', 'action' => 'view', $post->id]
+        ) ?>
+    【
+    <?php if (!empty($post->user)) : ?>
+        <?= $this->Html->link(
+            h($post->user->username), 
+            ['controller' => 'Users', 'action' => 'view', $post->user->id]
+            ) ?>
+        <?php else : ?><span>不明なユーザー</span>
+    <?php endif; ?>
+    】
     </li>
 <?php endforeach; ?>
 </ul>
+
+
+
+
