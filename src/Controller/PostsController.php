@@ -19,10 +19,28 @@ class PostsController extends AppController
      */
     public function index()
     {
+        $user = $this->request->getAttribute('identity');
         $query = $this->Posts->find()
-            ->contain(['Users']);
+        ->contain(['Users']);
+     
+        if ($user) {
+        // ログインしている場合
+        if ($user->role === 'admin') {
+            // admin はすべて見える → 条件なし
+        } else {
+            // 一般ユーザー
+            $query->where([
+                'OR' => [
+                    ['Posts.published' => 1],
+                    ['Posts.user_id' => $user->id],
+                ]
+            ]);
+        }
+    } else {
+        // 未ログイン
+        $query->where(['Posts.published' => 1]);
+    }
         $posts = $this->paginate($query);
-
         $this->set(compact('posts'));
     }
 

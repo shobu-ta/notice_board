@@ -40,4 +40,13 @@ class Post extends Entity
         'user' => true,
         'sections' => true,
     ];
+
+    /**
+     * published を boolean として扱う
+     */
+    protected function _getIsPublished(): bool
+    {
+        return (bool)$this->published;
+    }
+
 }

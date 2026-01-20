@@ -27,7 +27,7 @@
                     echo $this->Form->control('user_id', ['options' => $users]);
                     echo $this->Form->control('title');
                     echo $this->Form->control('body');
-                    echo $this->Form->control('published');
+                    echo $this->Form->control('published',['type'=>'checkbox', 'label'=>'公開する']);
                     echo $this->Form->control('sections._ids', ['options' => $sections]);
                 ?>
             </fieldset>

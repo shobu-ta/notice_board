@@ -58,7 +58,7 @@
                             <td><?= h($post->id) ?></td>
                             <td><?= h($post->title) ?></td>
                             <td><?= h($post->body) ?></td>
-                            <td><?= h($post->published) ?></td>
+                            <td><?= h($post->published) ? '公開' : '下書き'?></td>
                             <td><?= h($post->created) ?></td>
                             <td><?= h($post->modified) ?></td>
                             <td class="actions">

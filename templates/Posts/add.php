@@ -24,7 +24,7 @@
                  }
                     echo $this->Form->control('title');
                     echo $this->Form->control('body');
-                    echo $this->Form->control('published');
+                    echo $this->Form->control('published',['type'=>'checkbox', 'label'=>'公開する']);
                 // sections._ids が分かりにくい件:この投稿に関連する section の id を複数扱う 多対多の魔法ワード
                     echo $this->Form->control('sections._ids', ['options' => $sections]);
                 ?>

@@ -26,7 +26,7 @@
                     <td><?= $this->Number->format($post->id) ?></td>
                     <td><?= $post->hasValue('user') ? $this->Html->link($post->user->username, ['controller' => 'Users', 'action' => 'view', $post->user->id]) : '' ?></td>
                     <td><?= h($post->title) ?></td>
-                    <td><?= h($post->published) ?></td>
+                    <td><?= h($post->published) ? '公開' : '下書き' ?></td>
                     <td><?= h($post->created) ?></td>
                     <td><?= h($post->modified) ?></td>
                    <td class="actions">

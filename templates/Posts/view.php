@@ -40,7 +40,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Published') ?></th>
-                    <td><?= $post->published ? __('Yes') : __('No'); ?></td>
+                    <td><?= $post->is_published ? __('公開') : __('下書き'); ?></td>
                 </tr>
             </table>
             <div class="text">
