@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\ForbiddenException; 
 /**
  * Users Controller
  *
@@ -117,6 +118,10 @@ class UsersController extends AppController
     public function edit($id = null)
     {
         $user = $this->Users->get($id, contain: []);
+        $user = $this->request->getAttribute('identity');
+        if ($user->role !== 'admin' && $user->id !== $id) {
+            throw new ForbiddenException('この投稿を編集する権限がありません');
+        }
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
@@ -140,6 +145,10 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
+        $user = $this->request->getAttribute('identity');
+        if ($user->role !== 'admin' && $user->id !== $id) {
+            throw new ForbiddenException('この投稿を編集する権限がありません');
+        }
         if ($this->Users->delete($user)) {
             $this->Flash->success(__('The user has been deleted.'));
         } else {

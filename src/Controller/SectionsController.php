@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace App\Controller;
+use Cake\Http\Exception\ForbiddenException; 
 
 /**
  * Sections Controller
@@ -67,6 +68,10 @@ class SectionsController extends AppController
     public function edit($id = null)
     {
         $section = $this->Sections->get($id, contain: ['Posts']);
+        $user = $this->request->getAttribute('identity');
+        if ($user->role !== 'admin' ) {
+            throw new ForbiddenException('この投稿を編集する権限がありません');
+        }
         if ($this->request->is(['patch', 'post', 'put'])) {
             $section = $this->Sections->patchEntity($section, $this->request->getData());
             if ($this->Sections->save($section)) {
@@ -90,6 +95,10 @@ class SectionsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
+        $user = $this->request->getAttribute('identity');
+        if ($user->role !== 'admin' ) {
+            throw new ForbiddenException('この投稿を編集する権限がありません');
+        }
         $section = $this->Sections->get($id);
         if ($this->Sections->delete($section)) {
             $this->Flash->success(__('The section has been deleted.'));

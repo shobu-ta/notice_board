@@ -29,6 +29,13 @@
                     <td><?= h($user->modified) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $user->id]) ?>
+                        <?php if (
+                                    $this->Identity->isLoggedIn() &&
+                                    (
+                                        $this->Identity->get('role') === 'admin' ||
+                                        $user->id === $this->Identity->get('id')
+                                    )
+                                ): ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id]) ?>
                         <?= $this->Form->postLink(
                             __('Delete'),
@@ -38,6 +45,7 @@
                                 'confirm' => __('Are you sure you want to delete # {0}?', $user->id),
                             ]
                         ) ?>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

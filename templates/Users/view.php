@@ -63,6 +63,13 @@
                             <td><?= h($post->modified) ?></td>
                             <td class="actions">
                                 <?= $this->Html->link(__('View'), ['controller' => 'Posts', 'action' => 'view', $post->id]) ?>
+                                <?php if (
+                                    $this->Identity->isLoggedIn() &&
+                                    (
+                                        $this->Identity->get('role') === 'admin' ||
+                                        $post->user_id === $this->Identity->get('id')
+                                    )
+                                ): ?>
                                 <?= $this->Html->link(__('Edit'), ['controller' => 'Posts', 'action' => 'edit', $post->id]) ?>
                                 <?= $this->Form->postLink(
                                     __('Delete'),
@@ -72,6 +79,7 @@
                                         'confirm' => __('Are you sure you want to delete # {0}?', $post->id),
                                     ]
                                 ) ?>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
